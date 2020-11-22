@@ -10,7 +10,7 @@ from .utils import (
 from .decorators import (
     jwt_optional, jwt_refresh_token_required, jwt_required, verify_jwt_in_request,
     verify_jwt_in_request_optional, verify_jwt_refresh_token_in_request,
-    callback_handler
+    callback_handler, login_handler
 )
 
 __version__ = '0.1'
