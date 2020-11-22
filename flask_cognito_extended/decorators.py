@@ -168,7 +168,10 @@ def _exchange_and_load_tokens():
     ctx_stack.top.encoded_access_token = encoded_tokens['access_token']
     ctx_stack.top.encoded_refresh_token = encoded_tokens['refresh_token']
     ctx_stack.top.encoded_id_token = encoded_tokens['id_token']
-    ctx_stack.top.id_token = decoded_id_token
+    ctx_stack.top.jwt = decoded_id_token
+    ctx_stack.top.jwt_header = get_unverified_jwt_headers(encoded_tokens['id_token'])
+    _load_user(decoded_id_token[cognito_config.identity_claim_key])
+
 
 
 def _decode_verify_callback_request():
@@ -177,7 +180,7 @@ def _decode_verify_callback_request():
     if cognito_config.state != request.args.get('state'):
         raise AuthorizationExchangeError("state verification failed")
     try:
-        code = request.get('code')
+        code = request.args.get('code')
     except ValueError:
         raise AuthorizationExchangeError("code is missing in callback response")
     return code

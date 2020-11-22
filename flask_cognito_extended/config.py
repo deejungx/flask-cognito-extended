@@ -13,7 +13,7 @@ class _Config(object):
     Helper object for accessing and verifying options in this extension. This
     is meant for internal use of the application.
 
-    Default values for the configuration options are set in the jwt_manager
+    Default values for the configuration options are set in the cognito_manager
     object. All of these values are read only. This is simply a loose wrapper
     with some helper functionality for flasks `app.config`.
     """
@@ -80,7 +80,7 @@ class _Config(object):
         if not domain:
             raise RuntimeError('COGNITO_DOMAIN must be set to '
                                'redirect to create endpoint url. ')
-        if not domain.starts_with("https://"):
+        if not domain.startswith("https://"):
             domain = "https://{}".format(domain)
         return domain
 

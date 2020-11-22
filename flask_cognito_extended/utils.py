@@ -56,9 +56,10 @@ def exchange_code_for_token(code):
             }
     try:
         response = requests.post(url=url, headers=headers, data=data)
-        tokens = json.loads(response)
+        tokens = json.loads(response.text)
     except requests.exceptions.HTTPError as e:
         raise AuthorizationExchangeError(str(e)) from e
+    # check token errors
     # check token expiry
     published_time = datetime(*eut.parsedate(response.headers['Date'])[:6])
     expiry = tokens.pop('expires_in')
@@ -70,15 +71,6 @@ def exchange_code_for_token(code):
     if token_type != 'Bearer':
         raise AuthorizationExchangeError("Invalid token type")
     return tokens
-
-
-def get_id_token():
-    """
-    After the code exchange, the verified claims of the id token
-    can be access from this endpoint in dictionary format. If no
-    token is found, an empty dict is returned instead.
-    """
-    return getattr(ctx_stack.top, 'id_token', {})
 
 
 def get_encoded_access_token():
@@ -138,7 +130,7 @@ def get_current_user():
     """
     In a protected endpoint, this will return the user object for the JWT that
     is accessing this endpoint. This is only present if the
-    :meth:`~flask_jwt_extended.JWTManager.user_loader_callback_loader` is
+    :meth:`~flask_jwt_extended.CognitoManager.user_loader_callback_loader` is
     being used. If the user loader callback is not being used, this will
     return `None`.
     """
@@ -164,8 +156,8 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
     :param allow_expired: Options to ignore exp claim validation in token
     :return: Dictionary containing contents of the JWT
     """
-    jwt_manager = _get_jwt_manager()
-    secret = jwt_manager._decode_key_callback(cognito_config.public_key_uri)
+    cognito_manager = _get_cognito_manager()
+    secret = cognito_manager._decode_key_callback(cognito_config.public_key_uri)['keys']
 
     return decode_jwt(
         encoded_token=encoded_token,
@@ -178,32 +170,32 @@ def decode_token(encoded_token, csrf_value=None, allow_expired=False):
     )
 
 
-def _get_jwt_manager():
+def _get_cognito_manager():
     try:
-        return current_app.extensions['cognito-jwt-extended']
+        return current_app.extensions['flask-cognito-extended']
     except KeyError:  # pragma: no cover
-        raise RuntimeError("You must initialize a JWTManager with this flask "
+        raise RuntimeError("You must initialize a CognitoManager with this flask "
                            "application before using this method")
 
 
 def has_user_loader():
-    jwt_manager = _get_jwt_manager()
-    return jwt_manager._user_loader_callback is not None
+    cognito_manager = _get_cognito_manager()
+    return cognito_manager._user_loader_callback is not None
 
 
 def user_loader(*args, **kwargs):
-    jwt_manager = _get_jwt_manager()
-    return jwt_manager._user_loader_callback(*args, **kwargs)
+    cognito_manager = _get_cognito_manager()
+    return cognito_manager._user_loader_callback(*args, **kwargs)
 
 
 def has_token_in_blacklist_callback():
-    jwt_manager = _get_jwt_manager()
-    return jwt_manager._token_in_blacklist_callback is not None
+    cognito_manager = _get_cognito_manager()
+    return cognito_manager._token_in_blacklist_callback is not None
 
 
 def token_in_blacklist(*args, **kwargs):
-    jwt_manager = _get_jwt_manager()
-    return jwt_manager._token_in_blacklist_callback(*args, **kwargs)
+    cognito_manager = _get_cognito_manager()
+    return cognito_manager._token_in_blacklist_callback(*args, **kwargs)
 
 
 def verify_token_type(decoded_token, expected_type):

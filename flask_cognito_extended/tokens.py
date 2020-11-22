@@ -36,7 +36,7 @@ def decode_jwt(encoded_token, secret, identity_claim_key,
     if key_index == -1:
         raise JWTDecodeError("Invalid key attribute: kid")
     # construct the public key
-    public_key = jwk.construct(secret)
+    public_key = jwk.construct(secret[key_index])
     # get the last two sections of the token,
     # message and signature (encoded in base64)
     message, encoded_signature = str(token).rsplit('.', 1)

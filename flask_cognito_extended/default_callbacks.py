@@ -1,6 +1,6 @@
 """
 These are the default methods implementations that are used in this extension.
-All of these can be updated on an app by app basis using the JWTManager
+All of these can be updated on an app by app basis using the CognitoManager
 loader decorators. For further information, check out the following links:
 
 """
@@ -69,7 +69,7 @@ def default_decode_key_callback(public_uri):
     """
     try:
         response = requests.get(public_uri)
-        key = json.loads(response)
+        key = json.loads(response.text)
     except requests.exceptions.RequestException as e:
         raise FlaskCognitoException(str(e)) from e
     return key
