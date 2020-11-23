@@ -1,5 +1,5 @@
 # Flask-Cognito-Extended
-***
+
 Flask-Cognito-Extended is a Flask implementation of Amazon Cognito. This extension helps quickly implement authentication and authorization solutions based on Amazon's Cognito. It contains helpful functions and properties to handle token based authentication flows.
 
 ### Usage
