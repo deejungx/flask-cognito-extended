@@ -158,7 +158,7 @@ class CognitoManager(object):
         """
 
         # Where to look for the JWT. Available options are cookies or headers
-        app.config.setdefault('EXEMPT_METHODS', {"OPTIONS"})
+        app.config.setdefault('EXEMPT_METHODS', {"OPTIONS",})
 
         # Where to look for the JWT. Available options are cookies or headers
         app.config.setdefault('JWT_TOKEN_LOCATION', ('headers',))
@@ -185,11 +185,11 @@ class CognitoManager(object):
         app.config.setdefault('JWT_REFRESH_JSON_KEY', 'refresh_token')
 
         # Options for using double submit csrf protection
-        app.config.setdefault('JWT_COOKIE_CSRF_PROTECT', True)
+        app.config.setdefault('JWT_COOKIE_CSRF_PROTECT', False)
         app.config.setdefault('JWT_CSRF_METHODS', ['POST', 'PUT', 'PATCH', 'DELETE'])
         app.config.setdefault('JWT_ACCESS_CSRF_HEADER_NAME', 'X-CSRF-TOKEN')
         app.config.setdefault('JWT_REFRESH_CSRF_HEADER_NAME', 'X-CSRF-TOKEN')
-        app.config.setdefault('JWT_CSRF_IN_COOKIES', True)
+        app.config.setdefault('JWT_CSRF_IN_COOKIES', False)
         app.config.setdefault('JWT_ACCESS_CSRF_COOKIE_NAME', 'csrf_access_token')
         app.config.setdefault('JWT_REFRESH_CSRF_COOKIE_NAME', 'csrf_refresh_token')
         app.config.setdefault('JWT_ACCESS_CSRF_COOKIE_PATH', '/')

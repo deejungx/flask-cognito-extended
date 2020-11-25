@@ -11,6 +11,8 @@ Werkzeug = "==0.16.0"
 PyJWT = "==1.7.1"
 
 [dev-packages]
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.8"
