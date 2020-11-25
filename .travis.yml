@@ -1,0 +1,17 @@
+language: python
+matrix:
+  include:
+    python:
+      - 3.6
+      - 3.7
+      - 3.8
+    dist: xenial
+    sudo: true
+install:
+  - python --version
+  - pip install pipenv pytest
+  - pipenv install --dev
+script: 
+  - pytest
+after_success:
+  - codecov
