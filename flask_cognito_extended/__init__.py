@@ -5,7 +5,7 @@ from .utils import (
     set_refresh_cookies, unset_access_cookies, unset_jwt_cookies,
     unset_refresh_cookies, get_unverified_jwt_headers, get_raw_jwt_header,
     get_user_info, get_encoded_access_token, get_encoded_id_token,
-    get_encoded_refresh_token, get_unverified_jwt_claims
+    get_encoded_refresh_token, get_unverified_jwt_claims, get_logout_uri
 )
 from .decorators import (
     jwt_optional, jwt_refresh_token_required, jwt_required, verify_jwt_in_request,

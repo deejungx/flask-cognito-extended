@@ -13,11 +13,12 @@ app.config['COGNITO_USER_POOL_ID'] = "us-east-1_xxxxxxx"
 app.config['COGNITO_CLIENT_ID'] = "xxxxxxxxxxxxxxxxxxxxxxxxxx"
 app.config['COGNITO_DOMAIN'] = "https://yourdomainhere.com"
 app.config['COGNITO_REDIRECT_URI'] = "https://yourdomainhere/callback"
+app.config['COGNITO_SIGNOUT_URI'] = "https://yourdomainhere/logout-redirect"
 
 cognito = CognitoManager(app)
 
 # Use @login_handler decorator on your login route
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 @login_handler
 def login():
     return jsonify(msg="User already signed in."), 200

@@ -23,8 +23,8 @@ def login_handler(fn):
     A decorator to redirect users to login from cognito if they aren't already.
 
     You should use this decorator on the login endpoint you have specified
-    on your cognito app client settings. If a token is found, the user will be
-    loaded and you can handle the response.
+    on your cognito app client settings. If a user is already logged in and 
+    token is found, the user will be loaded and you can handle the response.
     """
     @wraps(fn)
     def wrapper(*args, **kwargs):

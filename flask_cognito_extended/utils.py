@@ -146,6 +146,16 @@ def get_jti(encoded_token):
     return decode_token(encoded_token).get('jti')
 
 
+def get_logout_uri():
+    """
+    Returns the logout uri string that can be used to redirect the
+    user to logout.
+
+    return: String containing logout uri
+    """
+    return cognito_config.logout_uri
+
+
 def decode_token(encoded_token, csrf_value=None, allow_expired=False):
     """
     Returns the decoded token (python dict) from an encoded JWT. This does all
@@ -199,7 +209,7 @@ def token_in_blacklist(*args, **kwargs):
 
 
 def verify_token_type(decoded_token, expected_type):
-    if decoded_token['type'] != expected_type:
+    if decoded_token['token_use'] != expected_type:
         raise WrongTokenError('Only {} tokens are allowed'.format(expected_type))
 
 

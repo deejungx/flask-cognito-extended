@@ -58,11 +58,18 @@ def decode_jwt(encoded_token, secret, identity_claim_key,
         data['iss'] = None
     if data['iss'] != issuer:
         raise JWTDecodeError("Missing or invalid issuer")
-    # check aud
-    if 'aud' not in data:
-        data['aud'] = None
-    if data['aud'] not in audience:
-        raise JWTDecodeError("Missing or invalid audience")
+    # check aud if id_token
+    if data['token_use'] == 'id':
+        if 'aud' not in data:
+            data['aud'] = None
+        if data['aud'] != audience:
+            raise JWTDecodeError("Missing or invalid audience")
+    # check clientid if access_token
+    if data['token_use'] == 'access':
+        if 'client_id' not in data:
+            data['client_id'] = None
+        if data['client_id'] != audience:
+            raise JWTDecodeError("Missing or invalid audience")
     # check csrf
     if csrf_value:
         if 'csrf' not in data:

@@ -57,6 +57,14 @@ class _Config(object):
                 domain=self.domain, client_id=self.client_id,
                 scope=self.scope, redirect_uri=self.redirect_uri,
                 state=self.state)
+    
+    @property
+    def logout_uri(self):
+        return ("{domain}/logout?client_id={client_id}"
+                "&logout_uri={signout_uri}".format(
+                    domain=self.domain, client_id=self.client_id,
+                    signout_uri=self.signout_uri
+                ))
 
     @property
     def user_pool_id(self):
@@ -90,6 +98,14 @@ class _Config(object):
         if not uri:
             raise RuntimeError('COGNITO_REDIRECT_URI must be set to '
                                'obtain callback url. ')
+        return uri
+    
+    @property
+    def signout_uri(self):
+        uri = current_app.config['COGNITO_SIGNOUT_URI']
+        if not uri:
+            raise RuntimeError('COGNITO_RSIGNOUT_URI must be set for '
+                               'logout callback.')
         return uri
 
     @property
