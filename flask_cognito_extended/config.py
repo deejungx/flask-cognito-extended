@@ -28,8 +28,11 @@ class _Config(object):
 
     @property
     def state(self):
-        return md5("{}:{}".format(self.client_id, self.user_pool_id).
-                   encode("utf-8")).hexdigest()
+        try:
+            state = current_app.config['COGNITO_STATE']
+        except KeyError:
+            return None
+        return state
 
     @property
     def issuer(self):
@@ -51,12 +54,18 @@ class _Config(object):
 
     @property
     def login_uri(self):
+        if self.state is not None:
+            return ("{domain}/login?client_id={client_id}"
+                    "&response_type=code&scope={scope}"
+                    "&redirect_uri={redirect_uri}&state={state}").format(
+                    domain=self.domain, client_id=self.client_id,
+                    scope=self.scope, redirect_uri=self.redirect_uri,
+                    state=self.state)
         return ("{domain}/login?client_id={client_id}"
                 "&response_type=code&scope={scope}"
-                "&redirect_uri={redirect_uri}&state={state}").format(
+                "&redirect_uri={redirect_uri}").format(
                 domain=self.domain, client_id=self.client_id,
-                scope=self.scope, redirect_uri=self.redirect_uri,
-                state=self.state)
+                scope=self.scope, redirect_uri=self.redirect_uri)
     
     @property
     def logout_uri(self):

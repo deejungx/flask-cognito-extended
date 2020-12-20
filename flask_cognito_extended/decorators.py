@@ -12,7 +12,7 @@ from flask_cognito_extended.config import cognito_config
 from flask_cognito_extended.utils import (
     decode_token, has_user_loader, user_loader,
     verify_token_not_blacklisted, verify_token_type, get_unverified_jwt_headers,
-    exchange_code_for_token)
+    exchange_code_for_token, has_authorization_state)
 from flask_cognito_extended.exceptions import (
     CSRFError, InvalidHeaderError, NoAuthorizationError, UserLoadError,
     AuthorizationExchangeError)
@@ -162,7 +162,7 @@ def jwt_refresh_token_required(fn):
 
 def _exchange_and_load_tokens():
     code = _decode_verify_callback_request()
-    encoded_tokens = exchange_code_for_token(code)
+    encoded_tokens = exchange_code_for_token(code=code)
     # Only the id_token is decoded and verified for authenticity
     decoded_id_token = decode_token(encoded_tokens['id_token'])
     ctx_stack.top.encoded_access_token = encoded_tokens['access_token']
@@ -175,14 +175,14 @@ def _exchange_and_load_tokens():
 
 
 def _decode_verify_callback_request():
-    if 'state' not in request.args:
-        raise AuthorizationExchangeError("state missing in callback response")
-    if cognito_config.state != request.args.get('state'):
-        raise AuthorizationExchangeError("state verification failed")
-    try:
-        code = request.args.get('code')
-    except ValueError:
-        raise AuthorizationExchangeError("code is missing in callback response")
+    if has_authorization_state():
+        if 'state' not in request.args:
+            raise AuthorizationExchangeError("state missing in callback response")
+        if cognito_config.state != request.args.get('state'):
+            raise AuthorizationExchangeError("state verification failed")
+    code = request.args.get('code', None)
+    if not code:
+        raise AuthorizationExchangeError("Code is missing in callback response")
     return code
 
 

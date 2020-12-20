@@ -19,6 +19,7 @@ app.config['COGNITO_DOMAIN'] = "https://yourdomainhere.com"
 app.config['COGNITO_REDIRECT_URI'] = "https://yourdomainhere/callback"
 app.config['COGNITO_SIGNOUT_URI'] = "https://yourdomainhere/logout-redirect"
 app.config['JWT_TOKEN_LOCATION'] = ('headers', 'cookies')
+app.config['COGNITO_STATE'] = 'somerandomstring'
 
 cognito = CognitoManager(app)
 
@@ -106,4 +107,4 @@ def protected():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

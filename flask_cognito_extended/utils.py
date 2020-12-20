@@ -59,7 +59,6 @@ def exchange_code_for_token(code):
         tokens = json.loads(response.text)
     except requests.exceptions.HTTPError as e:
         raise AuthorizationExchangeError(str(e)) from e
-    # check token errors
     # check token expiry
     published_time = datetime(*eut.parsedate(response.headers['Date'])[:6])
     expiry = tokens.pop('expires_in')
@@ -191,6 +190,10 @@ def _get_cognito_manager():
 def has_user_loader():
     cognito_manager = _get_cognito_manager()
     return cognito_manager._user_loader_callback is not None
+
+
+def has_authorization_state():
+    return cognito_config.state is not None
 
 
 def user_loader(*args, **kwargs):
