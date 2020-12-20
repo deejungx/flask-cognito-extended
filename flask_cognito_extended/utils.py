@@ -108,6 +108,15 @@ def get_raw_jwt():
     return getattr(ctx_stack.top, 'jwt', {})
 
 
+def get_encoded_jwt():
+    """
+    In a protected endpoint, this will return the python String which has
+    the encoded JWT that is accessing the endpoint. If no
+    JWT is currently present, an empty String is returned instead.
+    """
+    return getattr(ctx_stack.top, 'jwt_encoded', "")
+
+
 def get_raw_jwt_header():
     """
     In a protected endpoint, this will return the python dictionary which has

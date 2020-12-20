@@ -30,9 +30,10 @@ def login_handler(fn):
     def wrapper(*args, **kwargs):
         try:
             if request.method not in cognito_config.exempt_methods:
-                jwt_data, jwt_header = _decode_jwt_from_request(request_type='access')
+                jwt_data, jwt_header, jwt_encoded = _decode_jwt_from_request(request_type='access')
                 ctx_stack.top.jwt = jwt_data
                 ctx_stack.top.jwt_header = jwt_header
+                ctx_stack.top.jwt_encoded = jwt_encoded
                 _load_user(jwt_data[cognito_config.identity_claim_key])
                 return fn(*args, **kwargs)
         except (NoAuthorizationError, InvalidHeaderError):
@@ -77,9 +78,10 @@ def verify_jwt_in_request():
     no token or if the token is invalid.
     """
     if request.method not in cognito_config.exempt_methods:
-        jwt_data, jwt_header = _decode_jwt_from_request(request_type='access')
+        jwt_data, jwt_header, jwt_encoded = _decode_jwt_from_request(request_type='access')
         ctx_stack.top.jwt = jwt_data
         ctx_stack.top.jwt_header = jwt_header
+        ctx_stack.top.jwt_encoded = jwt_encoded
         _load_user(jwt_data[cognito_config.identity_claim_key])
 
 
@@ -105,9 +107,10 @@ def verify_jwt_in_request_optional():
     """
     try:
         if request.method not in cognito_config.exempt_methods:
-            jwt_data, jwt_header = _decode_jwt_from_request(request_type='access')
+            jwt_data, jwt_header, jwt_encoded = _decode_jwt_from_request(request_type='access')
             ctx_stack.top.jwt = jwt_data
             ctx_stack.top.jwt_header = jwt_header
+            ctx_stack.top.jwt_encoded = jwt_encoded
             _load_user(jwt_data[cognito_config.identity_claim_key])
     except (NoAuthorizationError, InvalidHeaderError):
         pass
@@ -119,9 +122,10 @@ def verify_jwt_refresh_token_in_request():
     exception if there is no token or the token is invalid.
     """
     if request.method not in cognito_config.exempt_methods:
-        jwt_data, jwt_header = _decode_jwt_from_request(request_type='refresh')
+        jwt_data, jwt_header, jwt_encoded = _decode_jwt_from_request(request_type='refresh')
         ctx_stack.top.jwt = jwt_data
         ctx_stack.top.jwt_header = jwt_header
+        ctx_stack.top.jwt_encoded = jwt_encoded
         _load_user(jwt_data[cognito_config.identity_claim_key])
 
 
@@ -305,6 +309,7 @@ def _decode_jwt_from_request(request_type):
     errors = []
     decoded_token = None
     jwt_header = None
+    encoded_token = None
     for get_encoded_token_function in get_encoded_token_functions:
         try:
             encoded_token, csrf_token = get_encoded_token_function()
@@ -332,4 +337,4 @@ def _decode_jwt_from_request(request_type):
 
     verify_token_type(decoded_token, expected_type=request_type)
     verify_token_not_blacklisted(decoded_token, request_type)
-    return decoded_token, jwt_header
+    return decoded_token, jwt_header, encoded_token
