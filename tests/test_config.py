@@ -238,12 +238,14 @@ def test_cognito_config(app):
         app.config['COGNITO_USER_POOL_ID'] = "us-east-1_Bg4lP27"
         app.config['COGNITO_CLIENT_ID'] = "ik23vg4532v1i4v234viy2uvdi823vhyv"
         app.config['COGNITO_REDIRECT_URI'] = "https://flaskcognito/callback"
+        app.config['COGNITO_STATE'] = 'viubd1v42i34ugiu23v4u2'
 
         assert cognito_config.scope == "aws.cognito.signin.user.admin+email+openid+profile"
         assert cognito_config.region == "us-east-1"
         assert cognito_config.user_pool_id == "us-east-1_Bg4lP27"
         assert cognito_config.client_id == "ik23vg4532v1i4v234viy2uvdi823vhyv"
         assert cognito_config.redirect_uri == "https://flaskcognito/callback"
+        assert cognito_config.state == 'viubd1v42i34ugiu23v4u2'
 
         app.config['COGNITO_DOMAIN'] = "https://flaskcognito.com"
         assert cognito_config.domain == "https://flaskcognito.com"
@@ -257,8 +259,3 @@ def test_cognito_config(app):
                                             "+openid+profile&redirect_uri=https://"
                                             "flaskcognito/callback&state={}").format(
                                                                 cognito_config.state)
-        
-        state = md5("{}:{}".format(cognito_config.client_id, cognito_config.user_pool_id).
-                   encode("utf-8")).hexdigest()
-        
-        assert cognito_config.state == state
