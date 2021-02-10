@@ -2,6 +2,7 @@ from werkzeug.local import LocalProxy
 from jose import jwt
 import json
 import requests
+import base64
 from datetime import datetime, timedelta
 import email.utils as eut
 from flask import current_app, redirect
@@ -48,7 +49,12 @@ def exchange_code_for_token(code):
              and id_token
     """
     url = '{domain}/oauth2/token'.format(domain=cognito_config.domain)
-    headers = {'Content-type': 'application/x-www-form-urlencoded'}
+    if cognito_config.client_secret:
+        authorization_string = cognito_config.client_id + ':' + cognito_config.client_secret
+        authorization = 'Basic '  + base64.b64encode(authorization_string.encode('utf-8')).decode('utf-8')
+        headers = {'Content-type': 'application/x-www-form-urlencoded', 'Authorization': authorization}
+    else:
+        headers = {'Content-type': 'application/x-www-form-urlencoded'}
     data = {'grant_type': 'authorization_code',
             'client_id': cognito_config.client_id,
             'redirect_uri': cognito_config.redirect_uri,

@@ -92,6 +92,14 @@ class _Config(object):
         return client_id
 
     @property
+    def client_secret(self):
+        try:
+            client_secret = current_app.config['COGNITO_CLIENT_SECRET']
+        except KeyError:
+            return None
+        return client_secret
+
+    @property
     def domain(self):
         domain = current_app.config['COGNITO_DOMAIN']
         if not domain:
