@@ -26,6 +26,7 @@ app.config['COGNITO_SCOPE'] = "aws.cognito.signin.user.admin+email+openid+profil
 app.config['COGNITO_REGION'] = "us-east-1"
 app.config['COGNITO_USER_POOL_ID'] = "us-east-1_xxxxxxx"
 app.config['COGNITO_CLIENT_ID'] = "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+app.config['COGNITO_CLIENT_SECRET'] = "xxxxxxxxxxxxxxxxxxxxxxxxxx" # optional
 app.config['COGNITO_DOMAIN'] = "https://yourdomainhere.com"
 app.config['COGNITO_REDIRECT_URI'] = "https://yourdomainhere/callback"
 
