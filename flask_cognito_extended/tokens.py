@@ -3,6 +3,7 @@ from jose import jwk, jwt
 from jose.utils import base64url_decode
 from werkzeug.security import safe_str_cmp
 from flask_cognito_extended.exceptions import CSRFError, JWTDecodeError
+from jwt import ExpiredSignatureError
 try:
     from flask import _app_ctx_stack as ctx_stack
 except ImportError:  # pragma: no cover
@@ -52,7 +53,7 @@ def decode_jwt(encoded_token, secret, identity_claim_key,
         raise JWTDecodeError("Missing claim: {}".format(identity_claim_key))
     if not allow_expired and time.time() > data['exp']:
         ctx_stack.top.expired_jwt = token
-        raise JWTDecodeError("Token has expired")
+        raise ExpiredSignatureError("Token has expired")
     # check iss
     if 'iss' not in data:
         data['iss'] = None
